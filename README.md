@@ -1,2 +1,12 @@
 # social-auth
-Own project for learning Express.js, MongoDB, Passport.js etc.
+
+## Description
+
+Own project for learning authentication using social accounts
+
+## Running the app
+
+```bash
+
+$ npm run dev
+```
