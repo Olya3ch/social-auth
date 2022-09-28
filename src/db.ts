@@ -18,7 +18,6 @@ export async function connectToDatabase() {
 
   collections.users = usersCollection;
 
-  // tslint:disable-next-line:no-console
   console.log(
     `Successfully connected to database: ${db.databaseName} and collection: ${usersCollection.collectionName}`
   );

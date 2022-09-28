@@ -14,5 +14,8 @@
       "~": ["*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "rules": {
+    "no-console": "off"
+  },
 }

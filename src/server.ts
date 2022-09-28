@@ -1,10 +1,12 @@
 import express, { Application, Request, Response } from "express";
 import { connectToDatabase } from "./db";
-import { userRouter } from "./routes/userRouter";
+import { userRouter } from "./routers/userRouter";
 
 const app: Application = express();
 
 const port: number = 3001;
+
+app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello world");
@@ -12,15 +14,13 @@ app.get("/", (req: Request, res: Response) => {
 
 connectToDatabase()
   .then(() => {
-    // app.use("/user", userRouter);
+    app.use("/user", userRouter);
 
     app.listen(port, () => {
-      // tslint:disable-next-line:no-console
       console.log(`Server started at http://localhost:${port}`);
     });
   })
   .catch((error: Error) => {
-    // tslint:disable-next-line:no-console
     console.error("Database connection failed", error);
     process.exit();
   });
