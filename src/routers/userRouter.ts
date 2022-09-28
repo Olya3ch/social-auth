@@ -2,20 +2,33 @@ import express, { Request, Response } from "express";
 import { collections } from "../db";
 import User from "../models/user";
 
+import crypto from "crypto";
+import bcrypt from "bcrypt";
+
 export const userRouter = express.Router();
 
-userRouter.post("/signin", async (req: Request, res: Response) => {
+userRouter.post("/signup", async (req: Request, res: Response) => {
   try {
-    const newUser = req.body as User;
-    const result = await collections.users!.insertOne(newUser);
+    const { email, password } = req.body;
+
+    const ifUserExists = await collections.users!.findOne({ email });
+    if (ifUserExists)
+      return res.status(401).json({ detail: "User Already Exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const accessToken = crypto.randomBytes(30).toString("hex");
+
+    const newUser = { email: email, password: hashedPassword } as User;
+    const result = await collections.users!.updateOne(
+      { email: email },
+      { $setOnInsert: newUser },
+      { upsert: true }
+    );
 
     result
-      ? res
-          .status(201)
-          .send(`Successfully created a new user with id ${result.insertedId}`)
+      ? res.status(201).send({ accessToken: accessToken })
       : res.status(500).send("Failed to create a new user.");
   } catch (error) {
-    // tslint:disable-next-line:no-console
     console.error(error);
     if (error instanceof Error) {
       res.status(400).send(error.message);
